@@ -1,1 +1,4 @@
 <p>{{ title() }}</p>
+@for (hero of heroes(); track $index) {
+  <p>{{ hero | json }}</p>
+}
