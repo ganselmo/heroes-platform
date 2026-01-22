@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { Hero } from '../models/hero.model';
+
 @Injectable()
 export abstract class HeroesApi {
-  abstract getHeroes(): Observable<{}[]>;
+  abstract getHeroes(): Observable<Hero[]>;
 }
