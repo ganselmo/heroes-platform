@@ -1,4 +1,4 @@
 <p>{{ title() }}</p>
-@for (hero of heroes(); track $index) {
-  <p>{{ hero | json }}</p>
-}
+<router-outlet></router-outlet>
+<button matButton="tonal" (click)="navigate('home')">To Home</button>
+<button matButton="filled" (click)="navigate('create')">To Create</button>

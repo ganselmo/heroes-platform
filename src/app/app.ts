@@ -1,19 +1,18 @@
-import { JsonPipe } from '@angular/common';
-import { Component, inject, Signal, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { HeroesApi } from './api/heroes.api';
+import { Component, inject, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { Router, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
-  imports: [JsonPipe],
+  imports: [RouterOutlet, MatButtonModule],
   styleUrl: './app.scss',
 })
 export class App {
   protected readonly title = signal('Heroes Platform');
-  protected readonly heroesApi = inject(HeroesApi);
-  protected readonly heroes: Signal<any>;
-  constructor() {
-    this.heroes = toSignal(this.heroesApi.getHeroes());
+
+  router = inject(Router);
+  navigate(url: string): void {
+    this.router.navigateByUrl(url);
   }
 }
