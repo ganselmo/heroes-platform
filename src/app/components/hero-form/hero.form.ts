@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { HeroFormModel } from '../../models/hero-form.model';
@@ -8,7 +7,7 @@ import { Franchise } from '../../types/franchise.type';
 
 @Component({
   selector: 'app-hero-form',
-  imports: [ReactiveFormsModule, MatInputModule, MatSelectModule, MatButton],
+  imports: [ReactiveFormsModule, MatInputModule, MatSelectModule],
   templateUrl: './hero.form.html',
   styleUrl: './hero.form.scss',
 })

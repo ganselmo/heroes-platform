@@ -1,0 +1,13 @@
+section {
+  margin: 10px 0;
+
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 40px 4fr 1fr;
+  grid-gap: 30px;
+
+  button {
+    margin: 10px 0;
+  }
+}

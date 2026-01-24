@@ -1,1 +1,5 @@
-<app-heroes-table [heroes]="heroes()" />
+<section>
+  <h2>Heroes List</h2>
+  <app-heroes-table [heroes]="heroes()" />
+  <button matButton="filled" (click)="createHero()">Create new Hero</button>
+</section>

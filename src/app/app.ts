@@ -1,6 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { Router, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -8,11 +8,4 @@ import { Router, RouterOutlet } from '@angular/router';
   imports: [RouterOutlet, MatButtonModule],
   styleUrl: './app.scss',
 })
-export class App {
-  protected readonly title = signal('Heroes Platform');
-
-  router = inject(Router);
-  navigate(url: string): void {
-    this.router.navigateByUrl(url);
-  }
-}
+export class App {}
