@@ -1,0 +1,19 @@
+<form class="heroes-form" [formGroup]="heroesForm">
+  <mat-form-field class="example-full-width">
+    <mat-label>Name</mat-label>
+    <input matInput placeholder="Batman" formControlName="name" />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Franchise</mat-label>
+    <mat-select formControlName="franchise">
+      @for (franchise of franchises; track franchise) {
+        <mat-option [value]="franchise.value">{{ franchise.value }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="example-full-width">
+    <mat-label>Description</mat-label>
+    <input matInput placeholder="Surf buildings." formControlName="description" />
+  </mat-form-field>
+  <button matButton (click)="onSubmit()">Submit</button>
+</form>

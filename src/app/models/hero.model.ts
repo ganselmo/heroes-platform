@@ -1,6 +1,8 @@
+import { Franchise } from '../types/franchise.type';
+
 export interface Hero {
   id: number;
   name: string;
-  franchise: 'Marvel' | 'DC' | 'Other';
+  franchise: Franchise;
   description: string;
 }
