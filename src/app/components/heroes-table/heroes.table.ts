@@ -1,7 +1,11 @@
-import { Component, effect, input } from '@angular/core';
+import { Component, effect, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
+import { take } from 'rxjs';
+import { HeroesApi } from '../../api/heroes.api';
 import { Hero } from '../../models/hero.model';
+import { DeleteHeroDialog } from '../delete-hero-dialog/delete-hero-dialog';
 
 @Component({
   selector: 'app-heroes-table',
@@ -15,16 +19,26 @@ export class HeroesTable {
   protected readonly headerRowDefinition = ['id', 'name', 'franchise', 'description', 'action'];
 
   protected tableData: Hero[] = [];
-
-  constructor() {
+  private readonly dialog = inject(MatDialog);
+  constructor(private heroesApi: HeroesApi) {
     effect(() => {
       this.tableData = this.heroes();
     });
   }
-  edit(id: number) {
+  onEdit(id: number) {
     console.log('edit:', id);
   }
-  delete(id: number) {
-    console.log('delete:', id);
+
+  onDelete(hero: Hero) {
+    const dialogRef = this.dialog.open(DeleteHeroDialog, {
+      data: { hero },
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(take(1))
+      .subscribe((confirmed) => {
+        if (confirmed) this.heroesApi.deleteHero(hero.id);
+      });
   }
 }

@@ -24,8 +24,8 @@
       <th mat-header-cell *matHeaderCellDef>Actions</th>
 
       <td mat-cell *matCellDef="let hero">
-        <button mat-button (click)="edit(hero.id)">Edit</button>
-        <button mat-button (click)="delete(hero.id)">Delete</button>
+        <button mat-button (click)="onEdit(hero)">Edit</button>
+        <button mat-button (click)="onDelete(hero)">Delete</button>
       </td>
     </ng-container>
 

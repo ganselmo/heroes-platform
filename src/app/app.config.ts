@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 
 import { HeroesApi } from './api/heroes.api';
-import { HeroesMock } from './mocks/heroes.mock';
+import { HeroesMock } from './mocks/heroes.api.mock';
 
 export const appConfig: ApplicationConfig = {
   providers: [
