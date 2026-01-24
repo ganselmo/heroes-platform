@@ -1,6 +1,6 @@
 <section>
   <h2>Create Hero</h2>
-  <app-hero-form />
-  <button (click)="onConfirm()" matButton="filled">Create Hero</button>
+  <app-hero-form (valueChange)="onValueChange($event)" (validChange)="onValidChange($event)" />
+  <button (click)="onConfirm()" [disabled]="!formValid()" matButton="filled">Create Hero</button>
   <button (click)="onCancel()" matButton="filled">Cancel</button>
 </section>
