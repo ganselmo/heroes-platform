@@ -1,5 +1,11 @@
 <section>
   <h2>Heroes List</h2>
-  <app-heroes-table [heroes]="heroes()" />
+  <app-heroes-table [heroes]="pagedHeroes()" />
+  <app-heroes-table-pagination
+    class="paginator"
+    [totalItems]="heroes().length"
+    [pageSize]="pageSize()"
+    (pageChange)="onPageChange($event)"
+  />
   <button matButton="filled" (click)="createHero()">Create new Hero</button>
 </section>
