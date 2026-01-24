@@ -1,4 +1,12 @@
-table {
+section {
   height: 100%;
   width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 40px;
+  gap: 10px;
+  .paginator {
+    align-self: end;
+    justify-self: end;
+  }
 }

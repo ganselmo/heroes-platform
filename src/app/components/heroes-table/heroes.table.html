@@ -1,34 +1,43 @@
-<table mat-table [dataSource]="heroes()">
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef>ID</th>
-    <td mat-cell *matCellDef="let hero">{{ hero.id }}</td>
-  </ng-container>
+<section>
+  <table mat-table [dataSource]="pagedHeroes()">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef>ID</th>
+      <td mat-cell *matCellDef="let hero">{{ hero.id }}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef>Name</th>
-    <td mat-cell *matCellDef="let hero">{{ hero.name }}</td>
-  </ng-container>
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <td mat-cell *matCellDef="let hero">{{ hero.name }}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="franchise">
-    <th mat-header-cell *matHeaderCellDef>Franchise</th>
-    <td mat-cell *matCellDef="let hero">{{ hero.franchise }}</td>
-  </ng-container>
+    <ng-container matColumnDef="franchise">
+      <th mat-header-cell *matHeaderCellDef>Franchise</th>
+      <td mat-cell *matCellDef="let hero">{{ hero.franchise }}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="description">
-    <th mat-header-cell *matHeaderCellDef>Description</th>
-    <td mat-cell *matCellDef="let hero">{{ hero.description }}</td>
-  </ng-container>
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef>Description</th>
+      <td mat-cell *matCellDef="let hero">{{ hero.description }}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="action">
-    <th mat-header-cell *matHeaderCellDef>Actions</th>
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
 
-    <td mat-cell *matCellDef="let hero">
-      <button mat-button>Edit</button>
-      <button mat-button>Delete</button>
-    </td>
-  </ng-container>
+      <td mat-cell *matCellDef="let hero">
+        <button mat-button>Edit</button>
+        <button mat-button>Delete</button>
+      </td>
+    </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="headerRowDefinition"></tr>
+    <tr mat-header-row *matHeaderRowDef="headerRowDefinition"></tr>
 
-  <tr mat-row *matRowDef="let row; columns: headerRowDefinition"></tr>
-</table>
+    <tr mat-row *matRowDef="let row; columns: headerRowDefinition"></tr>
+  </table>
+  <div class="paginator">
+    <button mat-button (click)="prevPage()" [disabled]="page() === 0">Previous</button>
+
+    <span> Page {{ page() + 1 }} / {{ totalPages() }} </span>
+
+    <button mat-button (click)="nextPage()" [disabled]="page() >= totalPages() - 1">Next</button>
+  </div>
+</section>
