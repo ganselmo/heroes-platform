@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { HeroesApi } from '../../api/heroes.api';
+import { HeroesTableFilter } from '../../components/heroes-table-filter/heroes-table-filter';
 import { HeroesTablePagination } from '../../components/heroes-table-pagination/heroes-table-pagination';
 import { HeroesTable } from '../../components/heroes-table/heroes.table';
 import { Hero } from '../../models/hero.model';
@@ -11,7 +12,7 @@ const PAGE_SIZE = 10;
 
 @Component({
   selector: 'app-home',
-  imports: [HeroesTable, MatButton, HeroesTablePagination],
+  imports: [HeroesTable, MatButton, HeroesTableFilter, HeroesTablePagination],
   templateUrl: './home.page.html',
   styleUrl: './home.page.scss',
 })
@@ -36,5 +37,13 @@ export class HomePage {
 
   createHero(): void {
     this.router.navigateByUrl('create');
+  }
+
+  resetFilter(): void {
+    this.heroesApi.resetFilter();
+  }
+
+  filterBySubstring(subString: string): void {
+    this.heroesApi.filterHeroesBySubstring(subString);
   }
 }

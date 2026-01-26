@@ -1,5 +1,10 @@
 <section>
   <h2>Heroes List</h2>
+  <app-heroes-table-filter
+    class="filter"
+    (filterValue)="filterBySubstring($event)"
+    (resetFilterValue)="resetFilter()"
+  />
   <app-heroes-table [heroes]="pagedHeroes()" />
   <app-heroes-table-pagination
     class="paginator"
