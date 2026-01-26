@@ -2,6 +2,7 @@ import { Component, effect, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { take } from 'rxjs';
 import { HeroesApi } from '../../api/heroes.api';
 import { Hero } from '../../models/hero.model';
@@ -20,13 +21,15 @@ export class HeroesTable {
 
   protected tableData: Hero[] = [];
   private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
+
   constructor(private heroesApi: HeroesApi) {
     effect(() => {
       this.tableData = this.heroes();
     });
   }
-  onEdit(id: number) {
-    console.log('edit:', id);
+  onEdit({ id }: Hero) {
+    this.router.navigateByUrl(`edit/${id}`);
   }
 
   onDelete(hero: Hero) {

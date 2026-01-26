@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { HeroesApi } from '../api/heroes.api';
 import { CreateHeroDTO } from '../dto/create-hero.dto';
+import { EditHeroDTO } from '../dto/edit-hero.dto';
 import { Hero } from '../models/hero.model';
 import { heroesMock } from './heroes.mock';
 
@@ -14,6 +15,11 @@ export class HeroesMock extends HeroesApi {
   override getHeroes(): Observable<Hero[]> {
     return this.heroes$.asObservable();
   }
+
+  override getHero(id: number): Observable<Hero | undefined> {
+    return this.heroes$.asObservable().pipe(map((heroes) => heroes.find((hero) => hero.id === id)));
+  }
+
   override deleteHero(id: number): void {
     const heroes = this.heroes$.value.filter((hero) => hero.id != id);
     this.heroes$.next(heroes);
@@ -28,5 +34,12 @@ export class HeroesMock extends HeroesApi {
       description: createHeroDto.description ?? '',
     };
     this.heroes$.next([...this.heroes$.value, newHero]);
+  }
+
+  override editHero(id: number, editHeroDto: EditHeroDTO): void {
+    const heroToedit = this.heroes$.value.find((hero) => hero.id === id);
+    const editedHero: Hero = Object.assign({}, heroToedit, editHeroDto);
+    const updatedHeroes = this.heroes$.value.map((hero) => (hero.id === id ? editedHero : hero));
+    this.heroes$.next(updatedHeroes);
   }
 }

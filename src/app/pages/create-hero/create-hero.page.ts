@@ -27,8 +27,13 @@ export class CreateHeroPage {
   }
 
   onConfirm(): void {
+    const heroFormValue = this.formValue();
+
+    if (!heroFormValue) {
+      return;
+    }
     if (this.formValid()) {
-      this.heroesApi.createHero(this.formValue()!);
+      this.heroesApi.createHero(heroFormValue);
       this.router.navigateByUrl('home');
     }
   }

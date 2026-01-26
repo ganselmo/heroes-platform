@@ -1,8 +1,8 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { CreateHeroDTO } from '../../dto/create-hero.dto';
+import { HeroFormValue } from '../../models/hero-form-value';
 import { HeroFormModel } from '../../models/hero-form.model';
 import { Franchise } from '../../types/franchise.type';
 
@@ -13,6 +13,8 @@ import { Franchise } from '../../types/franchise.type';
   styleUrl: './hero.form.scss',
 })
 export class HeroForm {
+  readonly initialValue = input<HeroFormValue | null>(null);
+
   franchises: { value: Franchise }[] = [{ value: 'Marvel' }, { value: 'DC' }, { value: 'Other' }];
 
   fb = inject(FormBuilder);
@@ -23,10 +25,25 @@ export class HeroForm {
     description: ['', [Validators.maxLength(255)]],
   });
 
-  protected valueChange = output<CreateHeroDTO>();
+  protected valueChange = output<HeroFormValue>();
   protected validChange = output<boolean>();
 
   constructor() {
+    effect(() => {
+      const hero = this.initialValue();
+
+      if (!hero) return;
+
+      this.heroesForm.setValue(
+        {
+          name: hero.name,
+          franchise: hero.franchise,
+          description: hero.description,
+        },
+        { emitEvent: false },
+      );
+    });
+
     this.heroesForm.valueChanges.subscribe(() => {
       const value = this.heroesForm.getRawValue();
       this.valueChange.emit(value);
