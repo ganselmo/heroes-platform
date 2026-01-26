@@ -12,4 +12,6 @@ export abstract class HeroesApi {
   abstract deleteHero(id: number): void;
   abstract createHero(createHeroDto: CreateHeroDTO): void;
   abstract editHero(id: number, editHeroDto: EditHeroDTO): void;
+  abstract filterHeroesBySubstring(substring: string): void;
+  abstract resetFilter(): void;
 }

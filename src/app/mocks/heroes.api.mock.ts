@@ -8,8 +8,10 @@ import { heroesMock } from './heroes.mock';
 
 @Injectable()
 export class HeroesMock extends HeroesApi {
-  private heroes$: BehaviorSubject<Hero[]> = new BehaviorSubject<Hero[]>(heroesMock);
+  private allHeroes: Hero[] = [...heroesMock];
+  private heroes$: BehaviorSubject<Hero[]> = new BehaviorSubject<Hero[]>([...this.allHeroes]);
 
+  private currentFilter = '';
   private idNumber: number = heroesMock.length;
 
   override getHeroes(): Observable<Hero[]> {
@@ -21,8 +23,9 @@ export class HeroesMock extends HeroesApi {
   }
 
   override deleteHero(id: number): void {
-    const heroes = this.heroes$.value.filter((hero) => hero.id != id);
-    this.heroes$.next(heroes);
+    const heroes = this.allHeroes.filter((hero) => hero.id != id);
+    this.allHeroes = [...heroes];
+    this.applyCurrentFilter();
   }
 
   override createHero(createHeroDto: CreateHeroDTO): void {
@@ -33,13 +36,36 @@ export class HeroesMock extends HeroesApi {
       franchise: createHeroDto.franchise,
       description: createHeroDto.description ?? '',
     };
-    this.heroes$.next([...this.heroes$.value, newHero]);
+    this.allHeroes = [...this.allHeroes, newHero];
+    this.applyCurrentFilter();
   }
 
   override editHero(id: number, editHeroDto: EditHeroDTO): void {
     const heroToedit = this.heroes$.value.find((hero) => hero.id === id);
     const editedHero: Hero = Object.assign({}, heroToedit, editHeroDto);
-    const updatedHeroes = this.heroes$.value.map((hero) => (hero.id === id ? editedHero : hero));
-    this.heroes$.next(updatedHeroes);
+    const updatedHeroes = this.allHeroes.map((hero) => (hero.id === id ? editedHero : hero));
+    this.allHeroes = [...updatedHeroes];
+    this.applyCurrentFilter();
+  }
+
+  override filterHeroesBySubstring(substring: string): void {
+    this.currentFilter = substring;
+    this.applyCurrentFilter();
+  }
+
+  override resetFilter(): void {
+    this.currentFilter = '';
+    this.applyCurrentFilter();
+  }
+
+  private applyCurrentFilter(): void {
+    if (!this.currentFilter) {
+      this.heroes$.next([...this.allHeroes]);
+    } else {
+      const filtered = this.allHeroes.filter((hero) =>
+        hero.name.toLowerCase().includes(this.currentFilter.toLowerCase()),
+      );
+      this.heroes$.next(filtered);
+    }
   }
 }
