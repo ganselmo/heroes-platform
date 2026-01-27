@@ -7,7 +7,7 @@ import { Hero } from '../models/hero.model';
 import { heroesMock } from './heroes.mock';
 
 @Injectable()
-export class HeroesMock extends HeroesApi {
+export class HeroesMockApi extends HeroesApi {
   private allHeroes: Hero[] = [...heroesMock];
   private heroes$: BehaviorSubject<Hero[]> = new BehaviorSubject<Hero[]>([...this.allHeroes]);
 

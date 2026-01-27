@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { HeroForm } from './hero.form';
 
 describe('HeroesForm', () => {
@@ -8,7 +11,8 @@ describe('HeroesForm', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HeroForm],
+      imports: [HeroForm, ReactiveFormsModule, MatInputModule, MatSelectModule],
+      providers: [FormBuilder],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HeroForm);

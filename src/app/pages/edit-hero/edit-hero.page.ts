@@ -16,12 +16,11 @@ import { HeroFormValue } from '../../models/hero-form-value';
 export class EditHeroPage {
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly heroesApi = inject(HeroesApi);
 
   protected readonly initialValue = toSignal(this.getResolvedHero(), {
     requireSync: true,
   });
-
-  private readonly heroesApi = inject(HeroesApi);
 
   protected readonly formValue = signal<HeroFormValue>(this.initialValue());
   protected readonly formValid = signal(false);

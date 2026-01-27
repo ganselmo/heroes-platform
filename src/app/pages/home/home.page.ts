@@ -23,7 +23,9 @@ export class HomePage {
     initialValue: [],
   });
 
-  protected readonly page = signal(0);
+  private readonly _page = signal(0);
+  public readonly page = this._page.asReadonly();
+
   protected readonly pageSize = signal(PAGE_SIZE);
 
   protected readonly pagedHeroes: Signal<Hero[]> = computed(() => {
@@ -32,7 +34,7 @@ export class HomePage {
   });
 
   onPageChange(page: number): void {
-    this.page.set(page);
+    this._page.set(page);
   }
 
   createHero(): void {
