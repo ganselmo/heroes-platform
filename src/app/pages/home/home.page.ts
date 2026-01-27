@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { HeroesApi } from '../../api/heroes.api';
 import { HeroesTableFilter } from '../../components/tables/heroes-table-filter/heroes-table-filter';
@@ -13,7 +14,7 @@ const PAGE_SIZE = 10;
 
 @Component({
   selector: 'app-home',
-  imports: [HeroesTable, MatButton, HeroesTableFilter, HeroesTablePagination],
+  imports: [HeroesTable, MatButton, HeroesTableFilter, HeroesTablePagination, MatIconModule],
   templateUrl: './home.page.html',
   styleUrl: './home.page.scss',
 })

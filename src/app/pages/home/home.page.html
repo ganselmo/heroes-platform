@@ -7,7 +7,14 @@
       (filterValue)="filterBySubstring($event)"
       (resetFilterValue)="resetFilter()"
     />
-    <app-heroes-table [heroes]="pagedHeroes()" />
+    @if (pagedHeroes().length > 0) {
+      <app-heroes-table [heroes]="pagedHeroes()" />
+    } @else {
+      <div class="no-results">
+        <mat-icon>warning</mat-icon>
+        <h3>No heroes found.</h3>
+      </div>
+    }
     @if (showPagination()) {
       <app-heroes-table-pagination
         class="paginator"

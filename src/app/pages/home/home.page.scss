@@ -17,6 +17,10 @@ section {
     min-height: 700px;
     max-height: 700px;
 
+    .no-results {
+      text-align: center;
+      padding: 2rem;
+    }
     .filter {
       align-self: start;
       justify-self: end;
