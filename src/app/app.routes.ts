@@ -1,22 +1,20 @@
 import { Routes } from '@angular/router';
-import { CreateHeroPage } from './pages/create-hero/create-hero.page';
-import { EditHeroPage } from './pages/edit-hero/edit-hero.page';
-import { HomePage } from './pages/home/home.page';
 import { editResolver } from './resolvers/edit.resolver';
 
 export const routes: Routes = [
   {
     path: 'home',
-    component: HomePage,
+    loadComponent: () => import('./pages/home/home.page').then((c) => c.HomePage),
   },
   {
     path: 'create',
-    component: CreateHeroPage,
+    loadComponent: () =>
+      import('./pages/create-hero/create-hero.page').then((c) => c.CreateHeroPage),
   },
   {
     path: 'edit/:id',
     resolve: { hero: editResolver },
-    component: EditHeroPage,
+    loadComponent: () => import('./pages/edit-hero/edit-hero.page').then((c) => c.EditHeroPage),
   },
   {
     path: '**',
