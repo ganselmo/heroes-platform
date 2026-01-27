@@ -1,7 +1,7 @@
 <form class="heroes-form" [formGroup]="heroesForm">
   <mat-form-field class="name">
     <mat-label>Name</mat-label>
-    <input matInput placeholder="Batman" formControlName="name" />
+    <input matInput appUppercase placeholder="Batman" formControlName="name" />
     <mat-error>Name is invalid</mat-error>
   </mat-form-field>
 
