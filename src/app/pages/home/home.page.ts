@@ -7,6 +7,7 @@ import { HeroesTableFilter } from '../../components/tables/heroes-table-filter/h
 import { HeroesTablePagination } from '../../components/tables/heroes-table-pagination/heroes-table-pagination';
 import { HeroesTable } from '../../components/tables/heroes-table/heroes.table';
 import { Hero } from '../../models/hero.model';
+import { HeroesStateService } from '../../services/heroes-state/heroes-state.service';
 
 const PAGE_SIZE = 10;
 
@@ -19,6 +20,8 @@ const PAGE_SIZE = 10;
 export class HomePage {
   private readonly heroesApi = inject(HeroesApi);
   private readonly router = inject(Router);
+  private readonly heroesStateService = inject(HeroesStateService);
+
   protected readonly heroes: Signal<Hero[]> = toSignal(this.heroesApi.getHeroes(), {
     initialValue: [],
   });
@@ -29,6 +32,10 @@ export class HomePage {
   protected readonly itemsPerPage = signal(PAGE_SIZE);
 
   protected readonly showPagination = computed(() => this.totalPages() > 1);
+
+  protected readonly initialFilterValue = toSignal(this.heroesStateService.filter$, {
+    requireSync: true,
+  });
 
   protected readonly pagedHeroes: Signal<Hero[]> = computed(() => {
     const start = this.page() * this.itemsPerPage();
@@ -46,10 +53,12 @@ export class HomePage {
   }
 
   resetFilter(): void {
+    this.heroesStateService.resetFilter();
     this.heroesApi.resetFilter();
   }
 
   filterBySubstring(subString: string): void {
+    this.heroesStateService.setFilter(subString);
     this.heroesApi.filterHeroesBySubstring(subString);
     this._page.set(0);
   }

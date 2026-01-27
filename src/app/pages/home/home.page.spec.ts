@@ -6,6 +6,7 @@ import { HeroesApi } from '../../api/heroes.api';
 import { HeroesMockApi } from '../../mocks/heroes.api.mock';
 import { heroesMock } from '../../mocks/heroes.mock';
 import { Hero } from '../../models/hero.model';
+import { HeroesStateService } from '../../services/heroes-state/heroes-state.service';
 import { LoadingService } from '../../services/loading/loading.service';
 import { HomePage } from './home.page';
 
@@ -22,6 +23,7 @@ describe('HomePage', () => {
         provideRouter([]),
         { provide: HeroesApi, useClass: HeroesMockApi },
         LoadingService,
+        HeroesStateService,
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(HomePage);

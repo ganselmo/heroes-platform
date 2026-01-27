@@ -3,6 +3,7 @@
   <div class="table">
     <app-heroes-table-filter
       class="filter"
+      [initialFilterValue]="initialFilterValue()"
       (filterValue)="filterBySubstring($event)"
       (resetFilterValue)="resetFilter()"
     />
