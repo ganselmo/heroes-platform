@@ -3,10 +3,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { UppercaseDirective } from '../../directives/uppercase/uppercase.directive';
-import { HeroFormValue } from '../../models/hero-form-value';
-import { HeroFormModel } from '../../models/hero-form.model';
-import { Franchise } from '../../types/franchise.type';
+import { UppercaseDirective } from '../../../directives/uppercase/uppercase.directive';
+import { HeroFormValue } from '../../../models/hero-form-value';
+import { HeroFormModel } from '../../../models/hero-form.model';
+import { Franchise } from '../../../types/franchise.type';
 
 @Component({
   selector: 'app-hero-form',

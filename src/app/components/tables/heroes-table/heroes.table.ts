@@ -4,10 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { finalize, take } from 'rxjs';
-import { HeroesApi } from '../../api/heroes.api';
-import { Hero } from '../../models/hero.model';
-import { LoadingService } from '../../services/loading/loading.service';
-import { DeleteHeroDialog } from '../delete-hero-dialog/delete-hero-dialog';
+import { HeroesApi } from '../../../api/heroes.api';
+import { Hero } from '../../../models/hero.model';
+import { LoadingService } from '../../../services/loading/loading.service';
+import { DeleteHeroDialog } from '../../dialogs/delete-hero-dialog/delete-hero-dialog';
 
 @Component({
   selector: 'app-heroes-table',

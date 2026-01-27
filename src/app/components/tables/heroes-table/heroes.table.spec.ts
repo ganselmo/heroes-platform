@@ -4,8 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { HeroesApi } from '../../api/heroes.api';
-import { LoadingService } from '../../services/loading/loading.service';
+import { HeroesApi } from '../../../api/heroes.api';
+import { LoadingService } from '../../../services/loading/loading.service';
 import { HeroesTable } from './heroes.table';
 
 describe('HeroesTable', () => {

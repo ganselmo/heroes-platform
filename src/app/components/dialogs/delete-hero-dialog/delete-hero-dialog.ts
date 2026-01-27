@@ -7,7 +7,7 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import { Hero } from '../../models/hero.model';
+import { Hero } from '../../../models/hero.model';
 
 @Component({
   selector: 'app-delete-hero-dialog',

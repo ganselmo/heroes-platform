@@ -3,9 +3,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { HeroesApi } from '../../api/heroes.api';
-import { HeroesTableFilter } from '../../components/heroes-table-filter/heroes-table-filter';
-import { HeroesTablePagination } from '../../components/heroes-table-pagination/heroes-table-pagination';
-import { HeroesTable } from '../../components/heroes-table/heroes.table';
+import { HeroesTableFilter } from '../../components/tables/heroes-table-filter/heroes-table-filter';
+import { HeroesTablePagination } from '../../components/tables/heroes-table-pagination/heroes-table-pagination';
+import { HeroesTable } from '../../components/tables/heroes-table/heroes.table';
 import { Hero } from '../../models/hero.model';
 
 const PAGE_SIZE = 10;

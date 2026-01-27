@@ -3,7 +3,7 @@ import { MatAnchor } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { HeroesApi } from '../../api/heroes.api';
-import { HeroForm } from '../../components/hero-form/hero.form';
+import { HeroForm } from '../../components/forms/hero-form/hero.form';
 import { CreateHeroDTO } from '../../dto/create-hero.dto';
 import { LoadingService } from '../../services/loading/loading.service';
 

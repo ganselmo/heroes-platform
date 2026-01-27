@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize, map, Observable } from 'rxjs';
 import { HeroesApi } from '../../api/heroes.api';
-import { HeroForm } from '../../components/hero-form/hero.form';
+import { HeroForm } from '../../components/forms/hero-form/hero.form';
 import { HeroFormValue } from '../../models/hero-form-value';
 import { LoadingService } from '../../services/loading/loading.service';
 
