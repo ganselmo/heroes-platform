@@ -3,7 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { finalize, take, tap } from 'rxjs';
+import { finalize, take } from 'rxjs';
 import { HeroesApi } from '../../api/heroes.api';
 import { Hero } from '../../models/hero.model';
 import { LoadingService } from '../../services/loading/loading.service';
@@ -41,16 +41,15 @@ export class HeroesTable {
 
     dialogRef
       .afterClosed()
-      .pipe(
-        take(1),
-        tap(() => this.loadingService.show()),
-      )
+      .pipe(take(1))
       .subscribe((confirmed) => {
-        if (confirmed)
+        if (confirmed) {
+          this.loadingService.show();
           this.heroesApi
             .deleteHero(hero.id)
             .pipe(finalize(() => this.loadingService.hide()))
             .subscribe();
+        }
       });
   }
 }
