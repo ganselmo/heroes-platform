@@ -1,9 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
 import { HeroesApi } from '../../api/heroes.api';
 import { HeroForm } from '../../components/hero-form/hero.form';
 import { CreateHeroDTO } from '../../dto/create-hero.dto';
+import { LoadingService } from '../../services/loading/loading.service';
 
 @Component({
   selector: 'app-create-hero',
@@ -14,6 +16,7 @@ import { CreateHeroDTO } from '../../dto/create-hero.dto';
 export class CreateHeroPage {
   private readonly router = inject(Router);
   private readonly heroesApi = inject(HeroesApi);
+  private readonly loadingService: LoadingService = inject(LoadingService);
 
   protected formValue = signal<CreateHeroDTO | null>(null);
   protected formValid = signal(false);
@@ -33,8 +36,16 @@ export class CreateHeroPage {
       return;
     }
     if (this.formValid()) {
-      this.heroesApi.createHero(heroFormValue);
-      this.router.navigateByUrl('home');
+      this.loadingService.show();
+      this.heroesApi
+        .createHero(heroFormValue)
+        .pipe(
+          finalize(() => {
+            this.loadingService.hide();
+            this.router.navigateByUrl('home');
+          }),
+        )
+        .subscribe();
     }
   }
   onCancel(): void {

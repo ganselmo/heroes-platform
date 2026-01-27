@@ -5,11 +5,13 @@ import { routes } from './app.routes';
 
 import { HeroesApi } from './api/heroes.api';
 import { HeroesMockApi } from './mocks/heroes.api.mock';
+import { LoadingService } from './services/loading/loading.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     { provide: HeroesApi, useClass: HeroesMockApi },
+    { provide: LoadingService },
   ],
 };

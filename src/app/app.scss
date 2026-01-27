@@ -1,3 +1,21 @@
-main {
-  margin: 50px 100px;
+:host {
+  display: block;
+  min-height: 100vh;
+
+  .app-content {
+    padding: 50px 100px;
+  }
+
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+
+    display: grid;
+    place-items: center;
+
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+
+    pointer-events: all;
+  }
 }

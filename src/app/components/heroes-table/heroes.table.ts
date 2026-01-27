@@ -3,9 +3,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { take } from 'rxjs';
+import { finalize, take, tap } from 'rxjs';
 import { HeroesApi } from '../../api/heroes.api';
 import { Hero } from '../../models/hero.model';
+import { LoadingService } from '../../services/loading/loading.service';
 import { DeleteHeroDialog } from '../delete-hero-dialog/delete-hero-dialog';
 
 @Component({
@@ -16,12 +17,13 @@ import { DeleteHeroDialog } from '../delete-hero-dialog/delete-hero-dialog';
 })
 export class HeroesTable {
   heroes = input<Hero[]>([]);
-
   protected readonly headerRowDefinition = ['id', 'name', 'franchise', 'description', 'action'];
 
-  protected tableData: Hero[] = [];
   private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
+  private readonly loadingService: LoadingService = inject(LoadingService);
+
+  protected tableData: Hero[] = [];
 
   constructor(private heroesApi: HeroesApi) {
     effect(() => {
@@ -39,9 +41,16 @@ export class HeroesTable {
 
     dialogRef
       .afterClosed()
-      .pipe(take(1))
+      .pipe(
+        take(1),
+        tap(() => this.loadingService.show()),
+      )
       .subscribe((confirmed) => {
-        if (confirmed) this.heroesApi.deleteHero(hero.id);
+        if (confirmed)
+          this.heroesApi
+            .deleteHero(hero.id)
+            .pipe(finalize(() => this.loadingService.hide()))
+            .subscribe();
       });
   }
 }

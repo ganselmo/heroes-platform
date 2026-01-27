@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, delay, map, Observable, of, tap } from 'rxjs';
 import { HeroesApi } from '../api/heroes.api';
 import { CreateHeroDTO } from '../dto/create-hero.dto';
 import { EditHeroDTO } from '../dto/edit-hero.dto';
@@ -22,30 +22,45 @@ export class HeroesMockApi extends HeroesApi {
     return this.heroes$.asObservable().pipe(map((heroes) => heroes.find((hero) => hero.id === id)));
   }
 
-  override deleteHero(id: number): void {
-    const heroes = this.allHeroes.filter((hero) => hero.id != id);
-    this.allHeroes = [...heroes];
-    this.applyCurrentFilter();
+  override deleteHero(id: number): Observable<void> {
+    return of(void 0).pipe(
+      delay(1000),
+      tap(() => {
+        const heroes = this.allHeroes.filter((hero) => hero.id !== id);
+        this.allHeroes = [...heroes];
+        this.applyCurrentFilter();
+      }),
+    );
   }
 
-  override createHero(createHeroDto: CreateHeroDTO): void {
-    this.idNumber++;
-    const newHero: Hero = {
-      id: this.idNumber,
-      name: createHeroDto.name,
-      franchise: createHeroDto.franchise,
-      description: createHeroDto.description ?? '',
-    };
-    this.allHeroes = [...this.allHeroes, newHero];
-    this.applyCurrentFilter();
+  override createHero(createHeroDto: CreateHeroDTO): Observable<void> {
+    return of(void 0).pipe(
+      delay(1000),
+      tap(() => {
+        this.idNumber++;
+        const newHero: Hero = {
+          id: this.idNumber,
+          name: createHeroDto.name,
+          franchise: createHeroDto.franchise,
+          description: createHeroDto.description ?? '',
+        };
+        this.allHeroes = [...this.allHeroes, newHero];
+        this.applyCurrentFilter();
+      }),
+    );
   }
 
-  override editHero(id: number, editHeroDto: EditHeroDTO): void {
-    const heroToedit = this.heroes$.value.find((hero) => hero.id === id);
-    const editedHero: Hero = Object.assign({}, heroToedit, editHeroDto);
-    const updatedHeroes = this.allHeroes.map((hero) => (hero.id === id ? editedHero : hero));
-    this.allHeroes = [...updatedHeroes];
-    this.applyCurrentFilter();
+  override editHero(id: number, editHeroDto: EditHeroDTO): Observable<void> {
+    return of(void 0).pipe(
+      delay(1000),
+      tap(() => {
+        const heroToedit = this.heroes$.value.find((hero) => hero.id === id);
+        const editedHero: Hero = Object.assign({}, heroToedit, editHeroDto);
+        const updatedHeroes = this.allHeroes.map((hero) => (hero.id === id ? editedHero : hero));
+        this.allHeroes = [...updatedHeroes];
+        this.applyCurrentFilter();
+      }),
+    );
   }
 
   override filterHeroesBySubstring(substring: string): void {

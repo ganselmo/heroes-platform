@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { take } from 'rxjs';
+import { firstValueFrom, take } from 'rxjs';
 import { HeroesApi } from '../api/heroes.api';
 import { CreateHeroDTO } from '../dto/create-hero.dto';
 import { EditHeroDTO } from '../dto/edit-hero.dto';
 import { Hero } from '../models/hero.model';
+import { LoadingService } from '../services/loading/loading.service';
 import { HeroesMockApi } from './heroes.api.mock';
 
 describe('HeroesMockApi via HeroesApi', () => {
@@ -32,7 +33,7 @@ describe('HeroesMockApi via HeroesApi', () => {
 
   beforeAll(() => {
     TestBed.configureTestingModule({
-      providers: [{ provide: HeroesApi, useClass: HeroesMockApi }],
+      providers: [{ provide: HeroesApi, useClass: HeroesMockApi }, LoadingService],
     });
     heroesApi = TestBed.inject(HeroesApi);
   });
@@ -64,7 +65,7 @@ describe('HeroesMockApi via HeroesApi', () => {
   });
 
   describe('Execute createHero', () => {
-    it('should create a new hero', () => {
+    it('should create a new hero', async () => {
       const newHero: CreateHeroDTO = {
         name: 'General',
         franchise: 'Other',
@@ -72,7 +73,9 @@ describe('HeroesMockApi via HeroesApi', () => {
       };
       expect(newHero).toBeDefined();
       const initialLength = emittedHeroes.length;
-      heroesApi.createHero(newHero);
+
+      await firstValueFrom(heroesApi.createHero(newHero));
+
       const heroesAfter = getCurrentHeroes(heroesApi);
 
       expect(heroesAfter.length).toBe(initialLength + 1);
@@ -81,22 +84,25 @@ describe('HeroesMockApi via HeroesApi', () => {
   });
 
   describe('Execute deleteHero', () => {
-    it('should Delete the first Hero', () => {
+    it('should delete the first Hero', async () => {
       const initialLength = emittedHeroes.length;
-      heroesApi.deleteHero(1);
+
+      await firstValueFrom(heroesApi.deleteHero(1));
+
       const heroesAfter = getCurrentHeroes(heroesApi);
       expect(heroesAfter.length).toBe(initialLength - 1);
     });
   });
 
-  describe('Execute editHero', () => {
-    it('should Edit the created Hero', () => {
+  describe('Execute editHero', async () => {
+    it('should Edit the created Hero', async () => {
       const editData: EditHeroDTO = {
         name: 'Hulk',
         franchise: 'Marvel',
         description: 'Edited',
       };
-      heroesApi.editHero(searchId, editData);
+
+      await firstValueFrom(heroesApi.editHero(searchId, editData));
 
       const foundHero = getHeroById(heroesApi, searchId);
       expect(foundHero).toBeDefined();

@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { HeroesApi } from '../../api/heroes.api';
 import { HeroForm } from '../../components/hero-form/hero.form';
 import { HeroesMockApi } from '../../mocks/heroes.api.mock';
+import { LoadingService } from '../../services/loading/loading.service';
 import { EditHeroPage } from './edit-hero.page';
 
 describe('EditHeroPage', () => {
@@ -31,6 +32,7 @@ describe('EditHeroPage', () => {
             }),
           },
         },
+        LoadingService,
       ],
     }).compileComponents();
 

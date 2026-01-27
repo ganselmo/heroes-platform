@@ -6,6 +6,7 @@ import { HeroesApi } from '../../api/heroes.api';
 import { HeroesMockApi } from '../../mocks/heroes.api.mock';
 import { heroesMock } from '../../mocks/heroes.mock';
 import { Hero } from '../../models/hero.model';
+import { LoadingService } from '../../services/loading/loading.service';
 import { HomePage } from './home.page';
 
 describe('HomePage', () => {
@@ -17,7 +18,11 @@ describe('HomePage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HomePage],
-      providers: [provideRouter([]), { provide: HeroesApi, useClass: HeroesMockApi }],
+      providers: [
+        provideRouter([]),
+        { provide: HeroesApi, useClass: HeroesMockApi },
+        LoadingService,
+      ],
     }).compileComponents();
     fixture = TestBed.createComponent(HomePage);
     component = fixture.componentInstance;

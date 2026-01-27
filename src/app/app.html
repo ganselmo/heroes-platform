@@ -1,4 +1,9 @@
-<main>
+<main class="app-content">
   <h1>Heroes Platform</h1>
   <router-outlet></router-outlet>
 </main>
+@if (loading()) {
+  <div class="loading-overlay">
+    <mat-spinner></mat-spinner>
+  </div>
+}

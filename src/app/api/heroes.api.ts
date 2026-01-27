@@ -9,9 +9,9 @@ import { Hero } from '../models/hero.model';
 export abstract class HeroesApi {
   abstract getHeroes(): Observable<Hero[]>;
   abstract getHero(id: number): Observable<Hero | undefined>;
-  abstract deleteHero(id: number): void;
-  abstract createHero(createHeroDto: CreateHeroDTO): void;
-  abstract editHero(id: number, editHeroDto: EditHeroDTO): void;
+  abstract deleteHero(id: number): Observable<void>;
+  abstract createHero(createHeroDto: CreateHeroDTO): Observable<void>;
+  abstract editHero(id: number, editHeroDto: EditHeroDTO): Observable<void>;
   abstract filterHeroesBySubstring(substring: string): void;
   abstract resetFilter(): void;
 }
