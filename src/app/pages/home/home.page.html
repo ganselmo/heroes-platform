@@ -1,16 +1,20 @@
 <section>
   <h2>Heroes List</h2>
-  <app-heroes-table-filter
-    class="filter"
-    (filterValue)="filterBySubstring($event)"
-    (resetFilterValue)="resetFilter()"
-  />
-  <app-heroes-table [heroes]="pagedHeroes()" />
-  <app-heroes-table-pagination
-    class="paginator"
-    [totalItems]="heroes().length"
-    [pageSize]="pageSize()"
-    (pageChange)="onPageChange($event)"
-  />
+  <div class="table">
+    <app-heroes-table-filter
+      class="filter"
+      (filterValue)="filterBySubstring($event)"
+      (resetFilterValue)="resetFilter()"
+    />
+    <app-heroes-table [heroes]="pagedHeroes()" />
+    @if (showPagination()) {
+      <app-heroes-table-pagination
+        class="paginator"
+        [totalPages]="totalPages()"
+        [itemsPerPage]="itemsPerPage()"
+        (pageChange)="onPageChange($event)"
+      />
+    }
+  </div>
   <button matButton="filled" (click)="createHero()">Create new Hero</button>
 </section>

@@ -1,5 +1,7 @@
 <div class="paginator">
-  <button mat-button (click)="prevPage()" [disabled]="page() === 0">Previous</button>
-  <span> Page {{ page() + 1 }} / {{ totalPages() }} </span>
-  <button mat-button (click)="nextPage()" [disabled]="page() >= totalPages() - 1">Next</button>
+  <button mat-button (click)="prevPage()" [disabled]="currentPage() === 0">Previous</button>
+  <span> Page {{ currentPage() + 1 }} / {{ totalPages() }} </span>
+  <button mat-button (click)="nextPage()" [disabled]="currentPage() >= totalPages() - 1">
+    Next
+  </button>
 </div>

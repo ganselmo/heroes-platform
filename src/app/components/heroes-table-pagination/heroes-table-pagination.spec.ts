@@ -12,8 +12,8 @@ describe('HeroesTablePagination', () => {
       imports: [HeroesTablePagination, MatButton],
     }).compileComponents();
     fixture = TestBed.createComponent(HeroesTablePagination);
-    fixture.componentRef.setInput('totalItems', 100);
-    fixture.componentRef.setInput('pageSize', 10);
+    fixture.componentRef.setInput('totalPages', 3);
+    fixture.componentRef.setInput('itemsPerPage', 10);
 
     component = fixture.componentInstance;
     await fixture.whenStable();

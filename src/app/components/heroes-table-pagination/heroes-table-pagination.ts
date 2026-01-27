@@ -1,4 +1,4 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import { Component, effect, input, output, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 
 @Component({
@@ -8,25 +8,33 @@ import { MatButton } from '@angular/material/button';
   styleUrl: './heroes-table-pagination.scss',
 })
 export class HeroesTablePagination {
-  totalItems = input.required<number>();
-  pageSize = input<number>(10);
+  totalPages = input.required<number>();
+  itemsPerPage = input<number>(10);
   pageChange = output<number>();
 
-  page = signal(0);
+  protected currentPage = signal(0);
 
-  totalPages = computed(() => Math.ceil(this.totalItems() / this.pageSize()));
+  constructor() {
+    effect(() => {
+      const safePage = Math.max(this.totalPages() - 1, 0);
+      if (this.currentPage() > safePage) {
+        this.currentPage.set(safePage);
+        this.pageChange.emit(safePage);
+      }
+    });
+  }
 
   nextPage(): void {
-    if (this.page() < this.totalPages() - 1) {
-      this.page.update((page) => page + 1);
-      this.pageChange.emit(this.page());
+    if (this.currentPage() < this.totalPages() - 1) {
+      this.currentPage.update((page) => page + 1);
+      this.pageChange.emit(this.currentPage());
     }
   }
 
   prevPage(): void {
-    if (this.page() > 0) {
-      this.page.update((page) => page - 1);
-      this.pageChange.emit(this.page());
+    if (this.currentPage() > 0) {
+      this.currentPage.update((page) => page - 1);
+      this.pageChange.emit(this.currentPage());
     }
   }
 }

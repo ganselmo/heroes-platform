@@ -26,12 +26,16 @@ export class HomePage {
   private readonly _page = signal(0);
   public readonly page = this._page.asReadonly();
 
-  protected readonly pageSize = signal(PAGE_SIZE);
+  protected readonly itemsPerPage = signal(PAGE_SIZE);
+
+  protected readonly showPagination = computed(() => this.totalPages() > 1);
 
   protected readonly pagedHeroes: Signal<Hero[]> = computed(() => {
-    const start = this.page() * this.pageSize();
-    return this.heroes().slice(start, start + this.pageSize());
+    const start = this.page() * this.itemsPerPage();
+    return this.heroes().slice(start, start + this.itemsPerPage());
   });
+
+  protected totalPages = computed(() => Math.ceil(this.heroes().length / this.itemsPerPage()));
 
   onPageChange(page: number): void {
     this._page.set(page);
@@ -47,5 +51,6 @@ export class HomePage {
 
   filterBySubstring(subString: string): void {
     this.heroesApi.filterHeroesBySubstring(subString);
+    this._page.set(0);
   }
 }
