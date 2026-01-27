@@ -1,0 +1,8 @@
+services:
+  angular-app:
+    container_name: angular21-app
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "80:80"
