@@ -1,19 +1,16 @@
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { firstValueFrom, take } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { HeroesApi } from '../api/heroes.api';
 import { CreateHeroDTO } from '../dto/create-hero.dto';
 import { EditHeroDTO } from '../dto/edit-hero.dto';
 import { Hero } from '../models/hero.model';
-import { LoadingService } from '../services/loading/loading.service';
+import { heroesBackendMockInterceptor, resetMockBackend } from './heroes-backend-mock.interceptor';
 import { HeroesMockApi } from './heroes.api.mock';
 
 describe('HeroesMockApi via HeroesApi', () => {
   let heroesApi: HeroesApi;
-  let emittedHeroes: Hero[] = [];
-
   const searchId = 5;
-  const searchPartialString = 'Capt';
-
   const expectedHulk: Hero = {
     id: searchId,
     name: 'Hulk',
@@ -27,126 +24,91 @@ describe('HeroesMockApi via HeroesApi', () => {
     description: 'A super soldier enhanced during World War II.',
   };
 
-  it('should be defined', () => {
-    expect(heroesApi).toBeTruthy();
-  });
-
-  beforeAll(() => {
+  beforeEach(() => {
+    resetMockBackend();
     TestBed.configureTestingModule({
-      providers: [{ provide: HeroesApi, useClass: HeroesMockApi }, LoadingService],
+      providers: [
+        { provide: HeroesApi, useClass: HeroesMockApi },
+        provideHttpClient(withInterceptors([heroesBackendMockInterceptor])),
+      ],
     });
     heroesApi = TestBed.inject(HeroesApi);
   });
 
-  beforeEach(() => {
-    emittedHeroes = getCurrentHeroes(heroesApi);
+  it('should be defined', () => {
+    expect(heroesApi).toBeTruthy();
   });
 
   describe('Execute getHeroes', () => {
-    it('should emit initial heroes', () => {
-      const heroes = getCurrentHeroes(heroesApi);
+    it('should return initial heroes', async () => {
+      const heroes = await firstValueFrom(heroesApi.getHeroes());
       expect(heroes).toBeDefined();
       expect(heroes.length).toBeGreaterThan(1);
     });
   });
 
   describe('Execute getHero', () => {
-    it('should emit an specific Hero', () => {
-      const foundHero = getHeroById(heroesApi, searchId);
-
-      expect(foundHero).toBeDefined();
-      expect(foundHero).toEqual({
-        id: searchId,
-        name: 'Hulk',
-        franchise: 'Marvel',
-        description: 'A scientist who transforms into a powerful green monster.',
-      });
+    it('should return a specific hero by id', async () => {
+      const hero = await firstValueFrom(heroesApi.getHero(searchId));
+      expect(hero).toEqual(expectedHulk);
     });
   });
 
   describe('Execute createHero', () => {
     it('should create a new hero', async () => {
+      const heroesBefore = await firstValueFrom(heroesApi.getHeroes());
+      const initialLength = heroesBefore.length;
       const newHero: CreateHeroDTO = {
         name: 'General',
         franchise: 'Other',
         description: 'Veteran',
       };
-      expect(newHero).toBeDefined();
-      const initialLength = emittedHeroes.length;
-
       await firstValueFrom(heroesApi.createHero(newHero));
-
-      const heroesAfter = getCurrentHeroes(heroesApi);
-
+      const heroesAfter = await firstValueFrom(heroesApi.getHeroes());
       expect(heroesAfter.length).toBe(initialLength + 1);
-      expect(heroesAfter.some((hero) => hero.name === 'General')).toBe(true);
+      expect(heroesAfter.some((h) => h.name === 'General')).toBe(true);
     });
   });
 
   describe('Execute deleteHero', () => {
-    it('should delete the first Hero', async () => {
-      const initialLength = emittedHeroes.length;
-
+    it('should delete a hero', async () => {
+      const heroesBefore = await firstValueFrom(heroesApi.getHeroes());
+      const initialLength = heroesBefore.length;
       await firstValueFrom(heroesApi.deleteHero(1));
-
-      const heroesAfter = getCurrentHeroes(heroesApi);
+      const heroesAfter = await firstValueFrom(heroesApi.getHeroes());
       expect(heroesAfter.length).toBe(initialLength - 1);
     });
   });
 
-  describe('Execute editHero', async () => {
-    it('should Edit the created Hero', async () => {
+  describe('Execute editHero', () => {
+    it('should edit a hero', async () => {
       const editData: EditHeroDTO = {
         name: 'Hulk',
         franchise: 'Marvel',
         description: 'Edited',
       };
-
       await firstValueFrom(heroesApi.editHero(searchId, editData));
-
-      const foundHero = getHeroById(heroesApi, searchId);
-      expect(foundHero).toBeDefined();
-      expect(foundHero).toEqual({ ...expectedHulk, description: 'Edited' });
+      const edited = await firstValueFrom(heroesApi.getHero(searchId));
+      expect(edited).toEqual({ ...expectedHulk, description: 'Edited' });
     });
   });
 
   describe('Execute Specific Search', () => {
-    it('should find Captain America', () => {
-      heroesApi.filterHeroesBySubstring(searchPartialString);
-
-      const filtered = getCurrentHeroes(heroesApi);
-
+    it('should find Captain America using Capt Substring', async () => {
+      heroesApi.filterHeroesBySubstring('Capt');
+      const filtered = await firstValueFrom(heroesApi.getHeroes());
       expect(filtered).toBeDefined();
       expect(filtered).toContainEqual(expectedCaptain);
     });
   });
 
   describe('Execute heroesFilter reset', () => {
-    it('should be reseted', () => {
-      const initialCount = emittedHeroes.length;
-
+    it('should reset the filter and return all heroes', async () => {
+      heroesApi.filterHeroesBySubstring('Capt');
+      const filtered = await firstValueFrom(heroesApi.getHeroes());
       heroesApi.resetFilter();
-
-      const afterReset = getCurrentHeroes(heroesApi);
-      expect(afterReset.length).toBeGreaterThanOrEqual(initialCount);
+      const all = await firstValueFrom(heroesApi.getHeroes());
+      expect(all.length).toBeGreaterThan(filtered.length);
     });
   });
 });
-
-const getCurrentHeroes = (heroesApi: HeroesApi): Hero[] => {
-  let result: Hero[] = [];
-  heroesApi
-    .getHeroes()
-    .pipe(take(1))
-    .subscribe((heroes) => (result = heroes));
-  return result;
-};
-
-const getHeroById = (api: HeroesApi, id: number): Hero | undefined => {
-  let foundHero: Hero | undefined;
-  api
-    .getHero(id)
-    .pipe(take(1))
-    .subscribe((hero) => (foundHero = hero));
-  return foundHero;
-};

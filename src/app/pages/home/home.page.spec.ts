@@ -1,13 +1,15 @@
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
-import { of } from 'rxjs';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { HeroesApi } from '../../api/heroes.api';
 import { HeroesMockApi } from '../../mocks/heroes.api.mock';
+import {
+  heroesBackendMockInterceptor,
+  resetMockBackend,
+} from '../../mocks/heroes-backend-mock.interceptor';
 import { heroesMock } from '../../mocks/heroes.mock';
-import { Hero } from '../../models/hero.model';
 import { HeroesStateService } from '../../services/heroes-state/heroes-state.service';
-import { LoadingService } from '../../services/loading/loading.service';
 import { HomePage } from './home.page';
 
 describe('HomePage', () => {
@@ -17,13 +19,14 @@ describe('HomePage', () => {
   let heroesApi: HeroesApi;
 
   beforeEach(async () => {
+    resetMockBackend();
     await TestBed.configureTestingModule({
       imports: [HomePage],
       providers: [
         provideRouter([]),
         { provide: HeroesApi, useClass: HeroesMockApi },
-        LoadingService,
         HeroesStateService,
+        provideHttpClient(withInterceptors([heroesBackendMockInterceptor])),
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(HomePage);
@@ -72,17 +75,19 @@ describe('HomePage', () => {
   });
 
   describe('Heroes Signal', () => {
-    it('should load heroes from api at initialization', () => {
-      const mockHeroes: Hero[] = heroesMock;
-      vi.spyOn(heroesApi, 'getHeroes').mockReturnValue(of(mockHeroes));
+    it('should load heroes from api at initialization', async () => {
       fixture.detectChanges();
-      expect((component as any).heroes()).toEqual(mockHeroes);
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      fixture.detectChanges();
+      expect((component as any).heroes().length).toBe(heroesMock.length);
     });
   });
 
   describe('UI composition', () => {
     it('should render title', async () => {
-      await fixture.whenStable();
+      fixture.detectChanges();
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      fixture.detectChanges();
       const compiled = fixture.nativeElement as HTMLElement;
       expect(compiled.querySelector('h2')?.textContent).toContain('Heroes List');
     });

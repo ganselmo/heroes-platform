@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
+import { BehaviorSubject, switchMap } from 'rxjs';
 import { HeroesApi } from '../../api/heroes.api';
 import { HeroesTableFilter } from '../../components/tables/heroes-table-filter/heroes-table-filter';
 import { HeroesTablePagination } from '../../components/tables/heroes-table-pagination/heroes-table-pagination';
@@ -23,9 +24,11 @@ export class HomePage {
   private readonly router = inject(Router);
   private readonly heroesStateService = inject(HeroesStateService);
 
-  protected readonly heroes: Signal<Hero[]> = toSignal(this.heroesApi.getHeroes(), {
-    initialValue: [],
-  });
+  private readonly refresh$ = new BehaviorSubject<void>(undefined);
+  protected readonly heroes: Signal<Hero[]> = toSignal(
+    this.refresh$.pipe(switchMap(() => this.heroesApi.getHeroes())),
+    { initialValue: [] },
+  );
 
   private readonly _page = signal(0);
   public readonly page = this._page.asReadonly();
@@ -56,11 +59,17 @@ export class HomePage {
   resetFilter(): void {
     this.heroesStateService.resetFilter();
     this.heroesApi.resetFilter();
+    this.refreshHeroes();
   }
 
   filterBySubstring(subString: string): void {
     this.heroesStateService.setFilter(subString);
     this.heroesApi.filterHeroesBySubstring(subString);
     this._page.set(0);
+    this.refreshHeroes();
+  }
+
+  refreshHeroes(): void {
+    this.refresh$.next();
   }
 }

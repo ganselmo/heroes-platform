@@ -8,7 +8,7 @@
       (resetFilterValue)="resetFilter()"
     />
     @if (pagedHeroes().length > 0) {
-      <app-heroes-table [heroes]="pagedHeroes()" />
+      <app-heroes-table [heroes]="pagedHeroes()" (deleted)="refreshHeroes()" />
     } @else {
       <div class="no-results">
         <mat-icon>warning</mat-icon>

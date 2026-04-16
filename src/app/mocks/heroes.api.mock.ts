@@ -1,86 +1,43 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, delay, map, Observable, of, tap } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { HeroesApi } from '../api/heroes.api';
 import { CreateHeroDTO } from '../dto/create-hero.dto';
 import { EditHeroDTO } from '../dto/edit-hero.dto';
 import { Hero } from '../models/hero.model';
-import { heroesMock } from './heroes.mock';
 
 @Injectable()
 export class HeroesMockApi extends HeroesApi {
-  private allHeroes: Hero[] = [...heroesMock];
-  private heroes$: BehaviorSubject<Hero[]> = new BehaviorSubject<Hero[]>([...this.allHeroes]);
-
+  private readonly http = inject(HttpClient);
   private currentFilter = '';
-  private idNumber: number = heroesMock.length;
 
   override getHeroes(): Observable<Hero[]> {
-    return this.heroes$.asObservable();
+    return this.http.get<Hero[]>('/api/heroes', {
+      params: this.currentFilter ? { filter: this.currentFilter } : {},
+    });
   }
 
   override getHero(id: number): Observable<Hero | undefined> {
-    return this.heroes$.asObservable().pipe(map((heroes) => heroes.find((hero) => hero.id === id)));
+    return this.http.get<Hero | undefined>(`/api/heroes/${id}`);
   }
 
   override deleteHero(id: number): Observable<void> {
-    return of(void 0).pipe(
-      delay(1000),
-      tap(() => {
-        const heroes = this.allHeroes.filter((hero) => hero.id !== id);
-        this.allHeroes = [...heroes];
-        this.applyCurrentFilter();
-      }),
-    );
+    return this.http.delete<void>(`/api/heroes/${id}`);
   }
 
   override createHero(createHeroDto: CreateHeroDTO): Observable<void> {
-    return of(void 0).pipe(
-      delay(1000),
-      tap(() => {
-        this.idNumber++;
-        const newHero: Hero = {
-          id: this.idNumber,
-          name: createHeroDto.name,
-          franchise: createHeroDto.franchise,
-          description: createHeroDto.description ?? '',
-        };
-        this.allHeroes = [...this.allHeroes, newHero];
-        this.applyCurrentFilter();
-      }),
-    );
+    return this.http.post<void>('/api/heroes', createHeroDto);
   }
 
   override editHero(id: number, editHeroDto: EditHeroDTO): Observable<void> {
-    return of(void 0).pipe(
-      delay(1000),
-      tap(() => {
-        const heroToedit = this.heroes$.value.find((hero) => hero.id === id);
-        const editedHero: Hero = Object.assign({}, heroToedit, editHeroDto);
-        const updatedHeroes = this.allHeroes.map((hero) => (hero.id === id ? editedHero : hero));
-        this.allHeroes = [...updatedHeroes];
-        this.applyCurrentFilter();
-      }),
-    );
+    return this.http.put<void>(`/api/heroes/${id}`, editHeroDto);
   }
 
   override filterHeroesBySubstring(substring: string): void {
     this.currentFilter = substring;
-    this.applyCurrentFilter();
   }
 
   override resetFilter(): void {
     this.currentFilter = '';
-    this.applyCurrentFilter();
-  }
-
-  private applyCurrentFilter(): void {
-    if (!this.currentFilter) {
-      this.heroes$.next([...this.allHeroes]);
-    } else {
-      const filtered = this.allHeroes.filter((hero) =>
-        hero.name.toLowerCase().includes(this.currentFilter.toLowerCase()),
-      );
-      this.heroes$.next(filtered);
-    }
   }
 }

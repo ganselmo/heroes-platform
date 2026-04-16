@@ -6,7 +6,6 @@ import { finalize, map, Observable } from 'rxjs';
 import { HeroesApi } from '../../api/heroes.api';
 import { HeroForm } from '../../components/forms/hero-form/hero.form';
 import { HeroFormValue } from '../../models/hero-form-value';
-import { LoadingService } from '../../services/loading/loading.service';
 
 @Component({
   selector: 'app-edit-hero',
@@ -18,7 +17,6 @@ export class EditHeroPage {
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly heroesApi = inject(HeroesApi);
-  private readonly loadingService: LoadingService = inject(LoadingService);
 
   protected readonly initialValue = toSignal(this.getResolvedHero(), {
     requireSync: true,
@@ -42,12 +40,10 @@ export class EditHeroPage {
       return;
     }
     if (this.formValid()) {
-      this.loadingService.show();
       this.heroesApi
         .editHero(heroId, heroFormValue)
         .pipe(
           finalize(() => {
-            this.loadingService.hide();
             this.router.navigateByUrl('home');
           }),
         )

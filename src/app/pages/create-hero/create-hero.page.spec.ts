@@ -4,7 +4,6 @@ import { MatAnchor } from '@angular/material/button';
 import { HeroesApi } from '../../api/heroes.api';
 import { HeroForm } from '../../components/forms/hero-form/hero.form';
 import { HeroesMockApi } from '../../mocks/heroes.api.mock';
-import { LoadingService } from '../../services/loading/loading.service';
 import { CreateHeroPage } from './create-hero.page';
 
 describe('CreateHeroPage', () => {
@@ -14,7 +13,7 @@ describe('CreateHeroPage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CreateHeroPage, HeroForm, MatAnchor],
-      providers: [{ provide: HeroesApi, useClass: HeroesMockApi }, LoadingService],
+      providers: [{ provide: HeroesApi, useClass: HeroesMockApi }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CreateHeroPage);
