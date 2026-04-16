@@ -1,12 +1,18 @@
-import { Directive, ElementRef, inject } from '@angular/core';
+import { Directive, inject } from '@angular/core';
+import { NgControl } from '@angular/forms';
 
 @Directive({
   selector: '[appUppercase]',
+  host: {
+    '[style.text-transform]': '"uppercase"',
+    '(input)': 'toUpperCase($event)',
+  },
 })
 export class UppercaseDirective {
-  private el: ElementRef<HTMLInputElement> = inject(ElementRef<HTMLInputElement>);
+  private ngControl = inject(NgControl);
 
-  constructor() {
-    this.el.nativeElement.style.textTransform = 'uppercase';
+  protected toUpperCase(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.ngControl.control!.setValue(input.value.toUpperCase());
   }
 }
