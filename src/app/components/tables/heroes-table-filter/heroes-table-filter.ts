@@ -1,5 +1,5 @@
-import { Component, effect, input, output } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, input, output } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,13 +19,12 @@ export class HeroesTableFilter {
   filterControl: FormControl<string | null> = new FormControl<string>('');
 
   constructor() {
-    effect(() => {
-      const filter = this.initialFilterValue();
-
-      if (!filter) return;
-
-      this.filterControl.patchValue(filter, { emitEvent: false });
-    });
+    toObservable(this.initialFilterValue)
+      .pipe(takeUntilDestroyed())
+      .subscribe((filter) => {
+        if (!filter) return;
+        this.filterControl.patchValue(filter, { emitEvent: false });
+      });
 
     this.filterControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {
       value ? this.filterValue.emit(value) : this.resetFilterValue.emit();

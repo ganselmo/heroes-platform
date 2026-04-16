@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
@@ -18,17 +18,10 @@ export class HeroesTable {
   deleted = output<void>();
   heroes = input<Hero[]>([]);
   protected readonly headerRowDefinition = ['id', 'name', 'franchise', 'description', 'action'];
-
+  private readonly heroesApi: HeroesApi = inject(HeroesApi);
   private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
 
-  protected tableData: Hero[] = [];
-
-  constructor(private heroesApi: HeroesApi) {
-    effect(() => {
-      this.tableData = this.heroes();
-    });
-  }
   onEdit({ id }: Hero) {
     this.router.navigateByUrl(`edit/${id}`);
   }

@@ -1,5 +1,5 @@
-import { Component, effect, inject, input, output } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, inject, input, output } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -35,20 +35,15 @@ export class HeroForm {
   protected validChange = output<boolean>();
 
   constructor() {
-    effect(() => {
-      const hero = this.initialValue();
-
-      if (!hero) return;
-
-      this.heroesForm.patchValue(
-        {
-          name: hero.name,
-          franchise: hero.franchise,
-          description: hero.description,
-        },
-        { emitEvent: false },
-      );
-    });
+    toObservable(this.initialValue)
+      .pipe(takeUntilDestroyed())
+      .subscribe((hero) => {
+        if (!hero) return;
+        this.heroesForm.patchValue(
+          { name: hero.name, franchise: hero.franchise, description: hero.description },
+          { emitEvent: false },
+        );
+      });
 
     this.heroesForm.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
       const value = this.heroesForm.getRawValue();
