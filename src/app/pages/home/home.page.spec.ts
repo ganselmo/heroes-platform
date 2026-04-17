@@ -8,7 +8,6 @@ import {
   heroesBackendMockInterceptor,
   resetMockBackend,
 } from '../../mocks/heroes-backend-mock.interceptor';
-import { heroesMock } from '../../mocks/heroes.mock';
 import { HeroesStateService } from '../../services/heroes-state/heroes-state.service';
 
 import { HomePage } from './home.page';
@@ -80,7 +79,11 @@ describe('HomePage', () => {
       fixture.detectChanges();
       await new Promise((resolve) => setTimeout(resolve, 400));
       fixture.detectChanges();
-      expect((component as any).heroes().length).toBe(heroesMock.length);
+
+      const compiled = fixture.nativeElement as HTMLElement;
+      const heroRows = compiled.querySelectorAll('table tbody tr');
+      expect(heroRows.length).toBe(10);
+      expect(compiled.querySelector('app-heroes-table-pagination')).toBeTruthy();
     });
   });
 
