@@ -1,5 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize, map, Observable } from 'rxjs';
@@ -17,6 +17,7 @@ export class EditHeroPage {
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly heroesApi = inject(HeroesApi);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly initialValue = toSignal(this.getResolvedHero(), {
     requireSync: true,
@@ -43,6 +44,7 @@ export class EditHeroPage {
       this.heroesApi
         .editHero(heroId, heroFormValue)
         .pipe(
+          takeUntilDestroyed(this.destroyRef),
           finalize(() => {
             this.router.navigateByUrl('home');
           }),

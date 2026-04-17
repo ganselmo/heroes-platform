@@ -1,4 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatAnchor } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -15,6 +16,7 @@ import { CreateHeroDTO } from '../../dto/create-hero.dto';
 export class CreateHeroPage {
   private readonly router = inject(Router);
   private readonly heroesApi = inject(HeroesApi);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected formValue = signal<CreateHeroDTO | null>(null);
   protected formValid = signal(false);
@@ -37,6 +39,7 @@ export class CreateHeroPage {
       this.heroesApi
         .createHero(heroFormValue)
         .pipe(
+          takeUntilDestroyed(this.destroyRef),
           finalize(() => {
             this.router.navigateByUrl('home');
           }),

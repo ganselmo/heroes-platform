@@ -1,9 +1,10 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, DestroyRef, inject, input, output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { take } from 'rxjs';
+import { filter, switchMap, take } from 'rxjs';
 import { HeroesApi } from '../../../api/heroes.api';
 import { Hero } from '../../../models/hero.model';
 import { DeleteHeroDialog } from '../../dialogs/delete-hero-dialog/delete-hero-dialog';
@@ -21,6 +22,7 @@ export class HeroesTable {
   private readonly heroesApi: HeroesApi = inject(HeroesApi);
   private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   onEdit({ id }: Hero) {
     this.router.navigateByUrl(`edit/${id}`);
@@ -33,11 +35,12 @@ export class HeroesTable {
 
     dialogRef
       .afterClosed()
-      .pipe(take(1))
-      .subscribe((confirmed) => {
-        if (confirmed) {
-          this.heroesApi.deleteHero(hero.id).subscribe(() => this.deleted.emit());
-        }
-      });
+      .pipe(
+        take(1),
+        filter((confirmed) => !!confirmed),
+        switchMap(() => this.heroesApi.deleteHero(hero.id)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => this.deleted.emit());
   }
 }
