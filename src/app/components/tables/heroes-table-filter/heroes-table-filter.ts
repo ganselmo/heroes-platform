@@ -4,6 +4,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-heroes-table-filter',
@@ -26,9 +27,11 @@ export class HeroesTableFilter {
         this.filterControl.patchValue(filter, { emitEvent: false });
       });
 
-    this.filterControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {
-      value ? this.filterValue.emit(value) : this.resetFilterValue.emit();
-    });
+    this.filterControl.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed())
+      .subscribe((value) => {
+        value ? this.filterValue.emit(value) : this.resetFilterValue.emit();
+      });
   }
 
   reset(): void {

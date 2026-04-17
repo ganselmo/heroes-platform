@@ -10,13 +10,14 @@ import {
 } from '../../mocks/heroes-backend-mock.interceptor';
 import { heroesMock } from '../../mocks/heroes.mock';
 import { HeroesStateService } from '../../services/heroes-state/heroes-state.service';
+
 import { HomePage } from './home.page';
 
 describe('HomePage', () => {
   let router: Router;
   let fixture: ComponentFixture<HomePage>;
   let component: HomePage;
-  let heroesApi: HeroesApi;
+  let heroesStateService: HeroesStateService;
 
   beforeEach(async () => {
     resetMockBackend();
@@ -32,7 +33,7 @@ describe('HomePage', () => {
     fixture = TestBed.createComponent(HomePage);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
-    heroesApi = TestBed.inject(HeroesApi);
+    heroesStateService = TestBed.inject(HeroesStateService);
   });
 
   describe('Hero Component Creation', () => {
@@ -58,16 +59,16 @@ describe('HomePage', () => {
   });
 
   describe('Execute resetFilter', () => {
-    it('should call resetFilter from HeroesApi', () => {
-      const spy = vi.spyOn(heroesApi, 'resetFilter');
+    it('should call resetFilter from HeroesStateService', () => {
+      const spy = vi.spyOn(heroesStateService, 'resetFilter');
       component.resetFilter();
       expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('Execute filterBySubstring', () => {
-    it('should call filterHeroesBySubstring with a search term', () => {
-      const spy = vi.spyOn(heroesApi, 'filterHeroesBySubstring');
+    it('should call setFilter on HeroesStateService with a search term', () => {
+      const spy = vi.spyOn(heroesStateService, 'setFilter');
       const searchTerm = 'Spiderman';
       component.filterBySubstring(searchTerm);
       expect(spy).toHaveBeenCalledWith(searchTerm);

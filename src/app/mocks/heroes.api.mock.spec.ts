@@ -95,18 +95,15 @@ describe('HeroesMockApi via HeroesApi', () => {
 
   describe('Execute Specific Search', () => {
     it('should find Captain America using Capt Substring', async () => {
-      heroesApi.filterHeroesBySubstring('Capt');
-      const filtered = await firstValueFrom(heroesApi.getHeroes());
+      const filtered = await firstValueFrom(heroesApi.getHeroes('Capt'));
       expect(filtered).toBeDefined();
       expect(filtered).toContainEqual(expectedCaptain);
     });
   });
 
-  describe('Execute heroesFilter reset', () => {
-    it('should reset the filter and return all heroes', async () => {
-      heroesApi.filterHeroesBySubstring('Capt');
-      const filtered = await firstValueFrom(heroesApi.getHeroes());
-      heroesApi.resetFilter();
+  describe('Execute getHeroes without filter after filtered call', () => {
+    it('should return all heroes when no filter is provided', async () => {
+      const filtered = await firstValueFrom(heroesApi.getHeroes('Capt'));
       const all = await firstValueFrom(heroesApi.getHeroes());
       expect(all.length).toBeGreaterThan(filtered.length);
     });

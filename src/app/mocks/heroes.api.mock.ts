@@ -9,11 +9,10 @@ import { Hero } from '../models/hero.model';
 @Injectable()
 export class HeroesMockApi extends HeroesApi {
   private readonly http = inject(HttpClient);
-  private currentFilter = '';
 
-  override getHeroes(): Observable<Hero[]> {
+  override getHeroes(filter?: string): Observable<Hero[]> {
     return this.http.get<Hero[]>('/api/heroes', {
-      params: this.currentFilter ? { filter: this.currentFilter } : {},
+      params: filter ? { filter } : {},
     });
   }
 
@@ -31,13 +30,5 @@ export class HeroesMockApi extends HeroesApi {
 
   override editHero(id: number, editHeroDto: EditHeroDTO): Observable<void> {
     return this.http.put<void>(`/api/heroes/${id}`, editHeroDto);
-  }
-
-  override filterHeroesBySubstring(substring: string): void {
-    this.currentFilter = substring;
-  }
-
-  override resetFilter(): void {
-    this.currentFilter = '';
   }
 }
