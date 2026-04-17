@@ -3,6 +3,8 @@ import { delay, of } from 'rxjs';
 import { CreateHeroDTO } from '../dto/create-hero.dto';
 import { heroesMock } from '../mocks/heroes.mock';
 import { Hero } from '../models/hero.model';
+import { HeroesPaginatedResponse } from '../models/paginated-response.model';
+
 let allHeroes: Hero[] = [...heroesMock];
 let idCounter = heroesMock.length;
 export const heroesBackendMockInterceptor: HttpInterceptorFn = (req, next) => {
@@ -10,10 +12,23 @@ export const heroesBackendMockInterceptor: HttpInterceptorFn = (req, next) => {
 
   if (url.startsWith('/api/heroes') && method === 'GET' && !url.match(/\/api\/heroes\/\d+/)) {
     const filterParam = req.params.get('filter') || '';
+    const page = Number(req.params.get('page') ?? 0);
+    const pageSize = Number(req.params.get('pageSize') ?? 0);
+
     const filtered = filterParam
       ? allHeroes.filter((hero) => hero.name.toLowerCase().includes(filterParam.toLowerCase()))
       : [...allHeroes];
-    return of(new HttpResponse({ status: 200, body: filtered })).pipe(delay(300));
+
+    const items = pageSize > 0 ? filtered.slice(page * pageSize, page * pageSize + pageSize) : filtered;
+
+    const response: HeroesPaginatedResponse = {
+      items,
+      total: filtered.length,
+      page,
+      pageSize,
+    };
+
+    return of(new HttpResponse({ status: 200, body: response })).pipe(delay(300));
   }
 
   if (url.match(/\/api\/heroes\/\d+/) && method === 'GET') {

@@ -40,10 +40,11 @@ describe('HeroesMockApi via HeroesApi', () => {
   });
 
   describe('Execute getHeroes', () => {
-    it('should return initial heroes', async () => {
-      const heroes = await firstValueFrom(heroesApi.getHeroes());
-      expect(heroes).toBeDefined();
-      expect(heroes.length).toBeGreaterThan(1);
+    it('should return paginated heroes', async () => {
+      const response = await firstValueFrom(heroesApi.getHeroes(0, 10));
+      expect(response).toBeDefined();
+      expect(response.items.length).toBe(10);
+      expect(response.total).toBeGreaterThan(1);
     });
   });
 
@@ -56,27 +57,27 @@ describe('HeroesMockApi via HeroesApi', () => {
 
   describe('Execute createHero', () => {
     it('should create a new hero', async () => {
-      const heroesBefore = await firstValueFrom(heroesApi.getHeroes());
-      const initialLength = heroesBefore.length;
+      const before = await firstValueFrom(heroesApi.getHeroes(0, 100));
+      const initialTotal = before.total;
       const newHero: CreateHeroDTO = {
         name: 'General',
         franchise: 'Other',
         description: 'Veteran',
       };
       await firstValueFrom(heroesApi.createHero(newHero));
-      const heroesAfter = await firstValueFrom(heroesApi.getHeroes());
-      expect(heroesAfter.length).toBe(initialLength + 1);
-      expect(heroesAfter.some((h) => h.name === 'General')).toBe(true);
+      const after = await firstValueFrom(heroesApi.getHeroes(0, 100));
+      expect(after.total).toBe(initialTotal + 1);
+      expect(after.items.some((hero) => hero.name === 'General')).toBe(true);
     });
   });
 
   describe('Execute deleteHero', () => {
     it('should delete a hero', async () => {
-      const heroesBefore = await firstValueFrom(heroesApi.getHeroes());
-      const initialLength = heroesBefore.length;
+      const before = await firstValueFrom(heroesApi.getHeroes(0, 100));
+      const initialTotal = before.total;
       await firstValueFrom(heroesApi.deleteHero(1));
-      const heroesAfter = await firstValueFrom(heroesApi.getHeroes());
-      expect(heroesAfter.length).toBe(initialLength - 1);
+      const after = await firstValueFrom(heroesApi.getHeroes(0, 100));
+      expect(after.total).toBe(initialTotal - 1);
     });
   });
 
@@ -95,17 +96,17 @@ describe('HeroesMockApi via HeroesApi', () => {
 
   describe('Execute Specific Search', () => {
     it('should find Captain America using Capt Substring', async () => {
-      const filtered = await firstValueFrom(heroesApi.getHeroes('Capt'));
-      expect(filtered).toBeDefined();
-      expect(filtered).toContainEqual(expectedCaptain);
+      const response = await firstValueFrom(heroesApi.getHeroes(0, 100, 'Capt'));
+      expect(response).toBeDefined();
+      expect(response.items).toContainEqual(expectedCaptain);
     });
   });
 
   describe('Execute getHeroes without filter after filtered call', () => {
     it('should return all heroes when no filter is provided', async () => {
-      const filtered = await firstValueFrom(heroesApi.getHeroes('Capt'));
-      const all = await firstValueFrom(heroesApi.getHeroes());
-      expect(all.length).toBeGreaterThan(filtered.length);
+      const filtered = await firstValueFrom(heroesApi.getHeroes(0, 100, 'Capt'));
+      const all = await firstValueFrom(heroesApi.getHeroes(0, 100));
+      expect(all.total).toBeGreaterThan(filtered.total);
     });
   });
 });

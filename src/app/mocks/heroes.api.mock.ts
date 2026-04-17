@@ -1,19 +1,22 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HeroesApi } from '../api/heroes.api';
 import { CreateHeroDTO } from '../dto/create-hero.dto';
 import { EditHeroDTO } from '../dto/edit-hero.dto';
 import { Hero } from '../models/hero.model';
+import { HeroesPaginatedResponse } from '../models/paginated-response.model';
 
 @Injectable()
 export class HeroesMockApi extends HeroesApi {
   private readonly http = inject(HttpClient);
 
-  override getHeroes(filter?: string): Observable<Hero[]> {
-    return this.http.get<Hero[]>('/api/heroes', {
-      params: filter ? { filter } : {},
-    });
+  override getHeroes(page: number, pageSize: number, filter?: string): Observable<HeroesPaginatedResponse> {
+    let params = new HttpParams().set('page', page).set('pageSize', pageSize);
+    if (filter) {
+      params = params.set('filter', filter);
+    }
+    return this.http.get<HeroesPaginatedResponse>('/api/heroes', { params });
   }
 
   override getHero(id: number): Observable<Hero | undefined> {
