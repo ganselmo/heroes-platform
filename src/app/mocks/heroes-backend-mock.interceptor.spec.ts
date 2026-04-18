@@ -73,7 +73,7 @@ describe('heroesBackendMockInterceptor', () => {
       expect(hero.id).toBe(1);
       expect(hero.name).toBe('Spider-Man');
     });
-    it('should return undefined for non-existent id', async () => {
+    it('should return 404 for non-existent id', async () => {
       const hero = await firstValueFrom(http.get<Hero | undefined>('/api/heroes/9999'));
       expect(hero).toBeNull();
     });

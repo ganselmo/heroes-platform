@@ -58,8 +58,23 @@ describe('editResolver', () => {
   });
 
   describe('Error Handling', () => {
-    it('should navigate to home and show error on failure', () => {
+    it('should navigate to home and show error on HTTP failure', () => {
       mockHeroesApi.getHero.mockReturnValue(throwError(() => new Error('Not found')));
+
+      const route = { params: { id: '999' } } as unknown as ActivatedRouteSnapshot;
+      const state = {} as RouterStateSnapshot;
+
+      let emitted = false;
+      const obs$ = TestBed.runInInjectionContext(() => editResolver(route, state));
+      (obs$ as ReturnType<typeof of>).subscribe({ next: () => (emitted = true) });
+
+      expect(emitted).toBe(false);
+      expect(mockNotificationService.showError).toHaveBeenCalledWith('Failed to load the hero');
+      expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('home');
+    });
+
+    it('should navigate to home and show error when hero is undefined', () => {
+      mockHeroesApi.getHero.mockReturnValue(of(undefined));
 
       const route = { params: { id: '999' } } as unknown as ActivatedRouteSnapshot;
       const state = {} as RouterStateSnapshot;

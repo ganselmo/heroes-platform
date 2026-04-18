@@ -34,6 +34,9 @@ export const heroesBackendMockInterceptor: HttpInterceptorFn = (req, next) => {
   if (url.match(/\/api\/heroes\/\d+/) && method === 'GET') {
     const id = Number(url.split('/').pop());
     const hero = allHeroes.find((hero) => hero.id === id);
+    if (!hero) {
+      return of(new HttpResponse({ status: 404, body: null })).pipe(delay(1000));
+    }
     return of(new HttpResponse({ status: 200, body: hero })).pipe(delay(1000));
   }
 
