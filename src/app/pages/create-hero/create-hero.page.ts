@@ -2,10 +2,10 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatAnchor } from '@angular/material/button';
 import { Router } from '@angular/router';
-import { finalize } from 'rxjs';
 import { HeroesApi } from '../../api/heroes.api';
 import { HeroForm } from '../../components/forms/hero-form/hero.form';
 import { CreateHeroDTO } from '../../dto/create-hero.dto';
+import { NotificationService } from '../../services/notification/notification.service';
 
 @Component({
   selector: 'app-create-hero',
@@ -17,6 +17,7 @@ export class CreateHeroPage {
   private readonly router = inject(Router);
   private readonly heroesApi = inject(HeroesApi);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly notificationService = inject(NotificationService);
 
   protected formValue = signal<CreateHeroDTO | null>(null);
   protected formValid = signal(false);
@@ -38,13 +39,14 @@ export class CreateHeroPage {
     if (this.formValid()) {
       this.heroesApi
         .createHero(heroFormValue)
-        .pipe(
-          takeUntilDestroyed(this.destroyRef),
-          finalize(() => {
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            this.notificationService.showSuccess('Hero created successfully');
             this.router.navigateByUrl('home');
-          }),
-        )
-        .subscribe();
+          },
+          error: () => this.notificationService.showError('Failed to create the hero'),
+        });
     }
   }
   onCancel(): void {

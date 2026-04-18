@@ -2,10 +2,11 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
-import { finalize, map, Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { HeroesApi } from '../../api/heroes.api';
 import { HeroForm } from '../../components/forms/hero-form/hero.form';
 import { HeroFormValue } from '../../models/hero-form-value';
+import { NotificationService } from '../../services/notification/notification.service';
 
 @Component({
   selector: 'app-edit-hero',
@@ -18,6 +19,7 @@ export class EditHeroPage {
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly heroesApi = inject(HeroesApi);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly notificationService = inject(NotificationService);
 
   protected readonly initialValue = toSignal(this.getResolvedHero(), {
     requireSync: true,
@@ -43,13 +45,14 @@ export class EditHeroPage {
     if (this.formValid()) {
       this.heroesApi
         .editHero(heroId, heroFormValue)
-        .pipe(
-          takeUntilDestroyed(this.destroyRef),
-          finalize(() => {
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            this.notificationService.showSuccess('Hero updated successfully');
             this.router.navigateByUrl('home');
-          }),
-        )
-        .subscribe();
+          },
+          error: () => this.notificationService.showError('Failed to update the hero'),
+        });
     }
   }
   onCancel(): void {

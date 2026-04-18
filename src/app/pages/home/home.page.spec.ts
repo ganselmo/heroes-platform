@@ -9,6 +9,7 @@ import {
   resetMockBackend,
 } from '../../mocks/heroes-backend-mock.interceptor';
 import { HeroesStateService } from '../../services/heroes-state/heroes-state.service';
+import { NotificationService } from '../../services/notification/notification.service';
 
 import { HomePage } from './home.page';
 
@@ -26,6 +27,7 @@ describe('HomePage', () => {
         provideRouter([]),
         { provide: HeroesApi, useClass: HeroesMockApi },
         HeroesStateService,
+        { provide: NotificationService, useValue: { showError: vi.fn() } },
         provideHttpClient(withInterceptors([heroesBackendMockInterceptor])),
       ],
     }).compileComponents();

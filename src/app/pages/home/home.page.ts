@@ -3,7 +3,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { BehaviorSubject, combineLatest, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, of, switchMap } from 'rxjs';
 import { HeroesApi } from '../../api/heroes.api';
 import { HeroesTableFilter } from '../../components/tables/heroes-table-filter/heroes-table-filter';
 import { HeroesTablePagination } from '../../components/tables/heroes-table-pagination/heroes-table-pagination';
@@ -31,13 +31,17 @@ export class HomePage {
 
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
 
+  private static readonly EMPTY_RESPONSE: HeroesPaginatedResponse = { items: [], total: 0, page: 0, pageSize: PAGE_SIZE };
+
   protected readonly paginatedResponse = toSignal(
     combineLatest([this.heroesStateService.filter$, toObservable(this._page), this.refresh$]).pipe(
       switchMap(([filter, page]) =>
-        this.heroesApi.getHeroes(page, this.itemsPerPage(), filter || undefined),
+        this.heroesApi.getHeroes(page, this.itemsPerPage(), filter || undefined).pipe(
+          catchError(() => of(HomePage.EMPTY_RESPONSE)),
+        ),
       ),
     ),
-    { initialValue: { items: [], total: 0, page: 0, pageSize: PAGE_SIZE } as HeroesPaginatedResponse },
+    { initialValue: HomePage.EMPTY_RESPONSE },
   );
 
   protected readonly pagedHeroes = computed(() => this.paginatedResponse().items);

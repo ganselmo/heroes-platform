@@ -4,9 +4,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { filter, switchMap, take } from 'rxjs';
+import { catchError, EMPTY, filter, switchMap, take } from 'rxjs';
 import { HeroesApi } from '../../../api/heroes.api';
 import { Hero } from '../../../models/hero.model';
+import { NotificationService } from '../../../services/notification/notification.service';
 import { DeleteHeroDialog } from '../../dialogs/delete-hero-dialog/delete-hero-dialog';
 
 @Component({
@@ -23,6 +24,7 @@ export class HeroesTable {
   private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly notificationService = inject(NotificationService);
 
   onEdit({ id }: Hero) {
     this.router.navigateByUrl(`edit/${id}`);
@@ -38,9 +40,19 @@ export class HeroesTable {
       .pipe(
         take(1),
         filter((confirmed) => !!confirmed),
-        switchMap(() => this.heroesApi.deleteHero(hero.id)),
+        switchMap(() =>
+          this.heroesApi.deleteHero(hero.id).pipe(
+            catchError(() => {
+              this.notificationService.showError('Failed to delete the hero');
+              return EMPTY;
+            }),
+          ),
+        ),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(() => this.deleted.emit());
+      .subscribe(() => {
+        this.notificationService.showSuccess('Hero deleted successfully');
+        this.deleted.emit();
+      });
   }
 }

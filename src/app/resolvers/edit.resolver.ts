@@ -1,10 +1,20 @@
 import { inject } from '@angular/core';
-import { ResolveFn } from '@angular/router';
+import { ResolveFn, Router } from '@angular/router';
+import { catchError, EMPTY } from 'rxjs';
 import { HeroesApi } from '../api/heroes.api';
 import { Hero } from '../models/hero.model';
+import { NotificationService } from '../services/notification/notification.service';
 
-export const editResolver: ResolveFn<Hero | undefined> = (route, state) => {
+export const editResolver: ResolveFn<Hero | undefined> = (route) => {
   const heroesApi = inject(HeroesApi);
-  const hero = heroesApi.getHero(Number(route.params['id']));
-  return hero;
+  const router = inject(Router);
+  const notificationService = inject(NotificationService);
+
+  return heroesApi.getHero(Number(route.params['id'])).pipe(
+    catchError(() => {
+      notificationService.showError('Failed to load the hero');
+      router.navigateByUrl('home');
+      return EMPTY;
+    }),
+  );
 };
