@@ -1,4 +1,4 @@
-import { Component, input, linkedSignal, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, linkedSignal, output } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 @Component({
@@ -6,6 +6,7 @@ import { MatButton } from '@angular/material/button';
   imports: [MatButton],
   templateUrl: './heroes-table-pagination.html',
   styleUrl: './heroes-table-pagination.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeroesTablePagination {
   totalPages = input.required<number>();

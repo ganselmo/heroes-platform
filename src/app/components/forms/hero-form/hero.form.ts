@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -13,6 +13,7 @@ import { Franchise } from '../../../types/franchise.type';
   imports: [ReactiveFormsModule, MatInputModule, MatSelectModule, UppercaseDirective],
   templateUrl: './hero.form.html',
   styleUrl: './hero.form.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeroForm {
   readonly initialValue = input<HeroFormValue | null>(null);

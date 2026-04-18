@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,6 +18,7 @@ const PAGE_SIZE = 10;
   imports: [HeroesTable, MatButton, HeroesTableFilter, HeroesTablePagination, MatIconModule],
   templateUrl: './home.page.html',
   styleUrl: './home.page.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePage {
   private readonly heroesApi = inject(HeroesApi);

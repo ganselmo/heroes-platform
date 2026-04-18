@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,6 +11,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
   imports: [ReactiveFormsModule, MatInputModule, MatButtonModule, MatIconModule],
   templateUrl: './heroes-table-filter.html',
   styleUrl: './heroes-table-filter.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeroesTableFilter {
   readonly initialFilterValue = input<string | null>(null);

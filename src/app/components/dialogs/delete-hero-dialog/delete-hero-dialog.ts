@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -14,6 +14,7 @@ import { Hero } from '../../../models/hero.model';
   imports: [MatButtonModule, MatDialogTitle, MatDialogContent, MatDialogActions],
   templateUrl: './delete-hero-dialog.html',
   styleUrl: './delete-hero-dialog.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeleteHeroDialog {
   private readonly dialogRef = inject(MatDialogRef<DeleteHeroDialog>);

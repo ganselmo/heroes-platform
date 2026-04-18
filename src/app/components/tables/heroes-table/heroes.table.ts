@@ -1,4 +1,12 @@
-import { Component, DestroyRef, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  input,
+  output,
+  TrackByFunction,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,6 +23,7 @@ import { DeleteHeroDialog } from '../../dialogs/delete-hero-dialog/delete-hero-d
   imports: [MatTableModule, MatButtonModule],
   templateUrl: './heroes.table.html',
   styleUrl: './heroes.table.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeroesTable {
   deleted = output<void>();
@@ -26,6 +35,7 @@ export class HeroesTable {
   private readonly destroyRef = inject(DestroyRef);
   private readonly notificationService = inject(NotificationService);
 
+  protected readonly trackByHeroId: TrackByFunction<Hero> = (_, hero) => hero.id;
   onEdit({ id }: Hero) {
     this.router.navigateByUrl(`edit/${id}`);
   }

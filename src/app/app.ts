@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -11,6 +11,7 @@ import { LoadingService } from './services/loading/loading.service';
   imports: [RouterOutlet, MatButtonModule, MatProgressSpinnerModule],
 
   styleUrl: './app.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
   private readonly loadingService = inject(LoadingService);

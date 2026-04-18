@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatAnchor } from '@angular/material/button';
 import { Router } from '@angular/router';
@@ -12,6 +12,7 @@ import { NotificationService } from '../../services/notification/notification.se
   imports: [HeroForm, MatAnchor],
   templateUrl: './create-hero.page.html',
   styleUrl: './create-hero.page.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateHeroPage {
   private readonly router = inject(Router);
